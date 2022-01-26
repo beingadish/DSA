@@ -8,7 +8,7 @@ class Graph
 
 public:
     void edgeAdd(int src, int data);
-    void bfs(int vertex);
+    void dfs(int vertex);
 };
 
 void Graph::edgeAdd(int src, int data)
@@ -17,19 +17,19 @@ void Graph::edgeAdd(int src, int data)
     adjLists[data].push_back(src);
 }
 
-void Graph::bfs(int v)
+void Graph::dfs(int v)
 {
     visited[v] = true;
-    list<int> queue = adjLists[v];
+    list<int> stack = adjLists[v];
 
     cout << v << " ";
 
     list<int>::iterator i;
-    for (i = queue.begin(); i != queue.end(); i++)
+    for (i = stack.begin(); i != stack.end(); i++)
     {
         if (visited[*i] != true)
         {
-            bfs(*i);
+            dfs(*i);
         }
     }
 }
@@ -47,7 +47,7 @@ int main()
     g.edgeAdd(4 ,6);
     g.edgeAdd(4, 8);
 
-    g.bfs(0);
+    g.dfs(0);
 
     return 0;
 }

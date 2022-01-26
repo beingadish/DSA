@@ -51,6 +51,7 @@ void Graph::BFS(int vertex)
             if(!visited[a])
             {
                 visited[a]=true;
+                
                 queue.push_back(a);
             }
         }

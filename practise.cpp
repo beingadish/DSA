@@ -1,58 +1,68 @@
-// DFS algorithm in C++
+// Max-Heap data structure in C++
 
 #include <iostream>
-#include <list>
+#include <vector>
 using namespace std;
 
-class Graph
+void swap(int *a, int *b)
 {
-  int numVertices;
-  list<int> *adjLists;
-  bool *visited;
-
-public:
-  Graph(int V);
-  void addEdge(int src, int dest);
-  void DFS(int vertex);
-};
-
-// Initialize graph
-Graph::Graph(int vertices)
+  int temp = *b;
+  *b = *a;
+  *a = temp;
+}
+void heapify(vector<int> &hT, int i)
 {
-  numVertices = vertices;
-  adjLists = new list<int>[vertices];
-  visited = new bool[vertices];
+  int size = hT.size();
+  int largest = i;
+  int l = 2 * i + 1;
+  int r = 2 * i + 2;
+  if (l < size && hT[l] > hT[largest])
+    largest = l;
+  if (r < size && hT[r] > hT[largest])
+    largest = r;
+
+  if (largest != i)
+  {
+    swap(&hT[i], &hT[largest]);
+    heapify(hT, largest);
+  }
+}
+void insert(vector<int> &hT, int newNum)
+{
+  int size = hT.size();
+  if (size == 0)
+  {
+    hT.push_back(newNum);
+  }
+  else
+  {
+    hT.push_back(newNum);
+    for (int i = size / 2 - 1; i >= 0; i--)
+    {
+      heapify(hT, i);
+    }
+  }
 }
 
-// Add edges
-void Graph::addEdge(int src, int dest)
+void printArray(vector<int> &hT)
 {
-  adjLists[src].push_front(dest);
-}
-
-// DFS algorithm
-void Graph::DFS(int vertex)
-{
-  visited[vertex] = true;
-  list<int> adjList = adjLists[vertex];
-
-  cout << vertex << " ";
-
-  list<int>::iterator i;
-  for (i = adjList.begin(); i != adjList.end(); ++i)
-    if (!visited[*i])
-      DFS(*i);
+  for (int i = 0; i < hT.size(); ++i)
+    cout << hT[i] << " ";
+  cout << "\n";
 }
 
 int main()
 {
-  Graph g(4);
-  g.addEdge(0, 1);
-  g.addEdge(0, 2);
-  g.addEdge(1, 2);
-  g.addEdge(2, 3);
+  vector<int> heapTree;
 
-  g.DFS(2);
+  insert(heapTree, 3);
+  insert(heapTree, 4);
+  insert(heapTree, 9);
+  insert(heapTree, 5);
+  insert(heapTree, 2);
 
-  return 0;
+  cout << "Max-Heap array: ";
+  printArray(heapTree);
+
+  
 }
