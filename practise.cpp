@@ -1,68 +1,120 @@
-// Max-Heap data structure in C++
+// Kosaraju's algorithm to find strongly connected components in C++
 
 #include <iostream>
-#include <vector>
+#include <list>
+#include <stack>
+
 using namespace std;
 
-void swap(int *a, int *b)
+class Graph
 {
-  int temp = *b;
-  *b = *a;
-  *a = temp;
-}
-void heapify(vector<int> &hT, int i)
-{
-  int size = hT.size();
-  int largest = i;
-  int l = 2 * i + 1;
-  int r = 2 * i + 2;
-  if (l < size && hT[l] > hT[largest])
-    largest = l;
-  if (r < size && hT[r] > hT[largest])
-    largest = r;
+  int V;
+  list<int> *adj;
+  void fillOrder(int s, bool visitedV[], stack<int> &Stack);
+  void DFS(int s, bool visitedV[]);
 
-  if (largest != i)
-  {
-    swap(&hT[i], &hT[largest]);
-    heapify(hT, largest);
-  }
-}
-void insert(vector<int> &hT, int newNum)
+public:
+  Graph(int V);
+  void addEdge(int s, int d);
+  void printSCC();
+  Graph transpose();
+};
+
+Graph::Graph(int V)
 {
-  int size = hT.size();
-  if (size == 0)
+  this->V = V;
+  adj = new list<int>[V];
+}
+
+// DFS
+void Graph::DFS(int s, bool visitedV[])
+{
+  visitedV[s] = true;
+  cout << s << " ";
+
+  list<int>::iterator i;
+  for (i = adj[s].begin(); i != adj[s].end(); ++i)
+    if (!visitedV[*i])
+      DFS(*i, visitedV);
+}
+
+// Transpose
+Graph Graph::transpose()
+{
+  Graph g(V);
+  for (int s = 0; s < V; s++)
   {
-    hT.push_back(newNum);
-  }
-  else
-  {
-    hT.push_back(newNum);
-    for (int i = size / 2 - 1; i >= 0; i--)
+    list<int>::iterator i;
+    for (i = adj[s].begin(); i != adj[s].end(); ++i)
     {
-      heapify(hT, i);
+      g.adj[*i].push_back(s);
+    }
+  }
+  return g;
+}
+
+// Add edge into the graph
+void Graph::addEdge(int s, int d)
+{
+  adj[s].push_back(d);
+}
+
+void Graph::fillOrder(int s, bool visitedV[], stack<int> &Stack)
+{
+  visitedV[s] = true;
+
+  list<int>::iterator i;
+  for (i = adj[s].begin(); i != adj[s].end(); ++i)
+    if (!visitedV[*i])
+      fillOrder(*i, visitedV, Stack);
+
+  Stack.push(s);
+}
+
+// Print strongly connected component
+void Graph::printSCC()
+{
+  stack<int> Stack;
+
+  bool *visitedV = new bool[V];
+  for (int i = 0; i < V; i++)
+    visitedV[i] = false;
+
+  for (int i = 0; i < V; i++)
+    if (visitedV[i] == false)
+      fillOrder(i, visitedV, Stack);
+
+  Graph gr = transpose();
+
+  for (int i = 0; i < V; i++)
+    visitedV[i] = false;
+
+  while (Stack.empty() == false)
+  {
+    int s = Stack.top();
+    Stack.pop();
+
+    if (visitedV[s] == false)
+    {
+      gr.DFS(s, visitedV);
+      cout << endl;
     }
   }
 }
 
-void printArray(vector<int> &hT)
-{
-  for (int i = 0; i < hT.size(); ++i)
-    cout << hT[i] << " ";
-  cout << "\n";
-}
-
 int main()
 {
-  vector<int> heapTree;
+  Graph g(8);
+  g.addEdge(0, 1);
+  g.addEdge(1, 2);
+  g.addEdge(2, 3);
+  g.addEdge(2, 4);
+  g.addEdge(3, 0);
+  g.addEdge(4, 5);
+  g.addEdge(5, 6);
+  g.addEdge(6, 4);
+  g.addEdge(6, 7);
 
-  insert(heapTree, 3);
-  insert(heapTree, 4);
-  insert(heapTree, 9);
-  insert(heapTree, 5);
-  insert(heapTree, 2);
-
-  cout << "Max-Heap array: ";
-  printArray(heapTree);
-
-  
+  cout << "Strongly Connected Components:\n";
+  g.printSCC();
 }
