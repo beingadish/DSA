@@ -4,7 +4,9 @@
         "*.tcc": "c",
         "cstdlib": "c",
         "memory": "c",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "cmath": "cpp",
+        "vector": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.errorSquiggles": "Enabled"

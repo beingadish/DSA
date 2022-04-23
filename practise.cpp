@@ -1,120 +1,70 @@
-// Kosaraju's algorithm to find strongly connected components in C++
 
 #include <iostream>
-#include <list>
-#include <stack>
-
 using namespace std;
+#include <limits.h>
 
-class Graph
+#define V 9
+
+int minDistance(int dist[], bool sptSet[])
 {
-  int V;
-  list<int> *adj;
-  void fillOrder(int s, bool visitedV[], stack<int> &Stack);
-  void DFS(int s, bool visitedV[]);
 
-public:
-  Graph(int V);
-  void addEdge(int s, int d);
-  void printSCC();
-  Graph transpose();
-};
+        int min = INT_MAX, min_index;
 
-Graph::Graph(int V)
-{
-  this->V = V;
-  adj = new list<int>[V];
+        for (int v = 0; v < V; v++)
+                if (sptSet[v] == false && dist[v] <= min)
+                        min = dist[v], min_index = v;
+
+        return min_index;
 }
 
-// DFS
-void Graph::DFS(int s, bool visitedV[])
+void printSolution(int dist[])
 {
-  visitedV[s] = true;
-  cout << s << " ";
-
-  list<int>::iterator i;
-  for (i = adj[s].begin(); i != adj[s].end(); ++i)
-    if (!visitedV[*i])
-      DFS(*i, visitedV);
+        cout << "Vertex \t Distance from Source" << endl;
+        for (int i = 0; i < V; i++)
+                cout << i << " \t\t" << dist[i] << endl;
 }
 
-// Transpose
-Graph Graph::transpose()
+void dijkstra(int graph[V][V], int src)
 {
-  Graph g(V);
-  for (int s = 0; s < V; s++)
-  {
-    list<int>::iterator i;
-    for (i = adj[s].begin(); i != adj[s].end(); ++i)
-    {
-      g.adj[*i].push_back(s);
-    }
-  }
-  return g;
-}
+        int dist[V]; 
 
-// Add edge into the graph
-void Graph::addEdge(int s, int d)
-{
-  adj[s].push_back(d);
-}
+        bool sptSet[V]; 
 
-void Graph::fillOrder(int s, bool visitedV[], stack<int> &Stack)
-{
-  visitedV[s] = true;
+        for (int i = 0; i < V; i++)
+                dist[i] = INT_MAX, sptSet[i] = false;
 
-  list<int>::iterator i;
-  for (i = adj[s].begin(); i != adj[s].end(); ++i)
-    if (!visitedV[*i])
-      fillOrder(*i, visitedV, Stack);
+        dist[src] = 0;
 
-  Stack.push(s);
-}
+        for (int count = 0; count < V - 1; count++)
+        {
+                int u = minDistance(dist, sptSet);
 
-// Print strongly connected component
-void Graph::printSCC()
-{
-  stack<int> Stack;
+                sptSet[u] = true;
 
-  bool *visitedV = new bool[V];
-  for (int i = 0; i < V; i++)
-    visitedV[i] = false;
+                for (int v = 0; v < V; v++)
 
-  for (int i = 0; i < V; i++)
-    if (visitedV[i] == false)
-      fillOrder(i, visitedV, Stack);
+                        if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v])
+                                dist[v] = dist[u] + graph[u][v];
+        }
 
-  Graph gr = transpose();
-
-  for (int i = 0; i < V; i++)
-    visitedV[i] = false;
-
-  while (Stack.empty() == false)
-  {
-    int s = Stack.top();
-    Stack.pop();
-
-    if (visitedV[s] == false)
-    {
-      gr.DFS(s, visitedV);
-      cout << endl;
-    }
-  }
+        printSolution(dist);
 }
 
 int main()
 {
-  Graph g(8);
-  g.addEdge(0, 1);
-  g.addEdge(1, 2);
-  g.addEdge(2, 3);
-  g.addEdge(2, 4);
-  g.addEdge(3, 0);
-  g.addEdge(4, 5);
-  g.addEdge(5, 6);
-  g.addEdge(6, 4);
-  g.addEdge(6, 7);
 
-  cout << "Strongly Connected Components:\n";
-  g.printSCC();
+        int graph[V][V] = {{0, 4, 0, 0, 0, 0, 0, 8, 0},
+                           {4, 0, 8, 0, 0, 0, 0, 11, 0},
+                           {0, 8, 0, 7, 0, 4, 0, 0, 2},
+                           {0, 0, 7, 0, 9, 14, 0, 0, 0},
+                           {0, 0, 0, 9, 0, 10, 0, 0, 0},
+                           {0, 0, 4, 14, 10, 0, 2, 0, 0},
+                           {0, 0, 0, 0, 0, 2, 0, 1, 6},
+                           {8, 11, 0, 0, 0, 0, 1, 0, 7},
+                           {0, 0, 2, 0, 0, 0, 6, 7, 0}};
+
+        dijkstra(graph, 0);
+
+        return 0;
 }
+

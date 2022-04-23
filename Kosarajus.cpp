@@ -114,7 +114,6 @@ int main()
     g.insert(3, 0);
     g.insert(4, 5);
     g.insert(5, 6);
-    g.insert(5, 6);
     g.insert(6, 4);
     g.insert(6, 7);
 
