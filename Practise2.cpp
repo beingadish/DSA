@@ -1,40 +1,41 @@
 #include<bits/stdc++.h>
-using namespace std;
 
-#define lli long long int 
+using namespace std;
 
 int main()
 {
-    lli t;
+    int t;
     cin>>t;
     while(t--)
     {
-        lli n,minus_ones=0;
-        vector<lli> arr(n);
-        for(lli i=0;i<n;i++)
+        int n;
+        cin>>n;
+        vector<pair<int,int>> arr(n);
+        for(int i=0;i<n;i++)
         {
-            cin>>arr[i];
-            if(arr[i]==-1)
-            minus_ones++;
-        }
-        if(n%2!=0)
+            int u,v;
+            cin>>u>>v;
+            arr[i]={u,v};
+        }    
+        int count=0;
+        for(int i=0;i<n;i++)
         {
-            if(minus_ones==n/2||minus_ones==(n/2+1))
-            cout<<"Yes"<<endl;
-            else
-            cout<<"No"<<endl;   
+            for(int j=i+1;j<n;j++)
+            {
+                for(int k=j+1;k<n;k++)
+                {
+                    int x1=arr[i].first;
+                    int x2=arr[j].first;
+                    int x3=arr[k].first;
+                    int y1=arr[i].second;
+                    int y2=arr[j].second;
+                    int y3=arr[k].second;
+                    if(((y2-y1)*(y3-y2))==((x2-x1)*(x2-x3)))
+                    count++;
+                    else if(((y3-y1)*(y3-y2))==((x1-x3)*(x3-x2)))
+                }
+            }
         }
-        else
-        {
-            lli a=n/2;
-            lli b=a+1;
-            lli c=a-1;
-            if(minus_ones==a||minus_ones==b||minus_ones==c)
-            cout<<"Yes"<<endl;
-            else
-            cout<<"No"<<endl;
-        }
-    
-
+        cout<<count<<endl;
     }
 }
