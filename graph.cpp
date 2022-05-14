@@ -5,7 +5,7 @@ using namespace std;
 void nodeInsert(vector<int> arr[],int a,int b)
 {
     arr[a].push_back(b);
-    arr[b].push_back(a);
+   // arr[b].push_back(a);
 }
 
 void show(vector<int> arr[],int n)
